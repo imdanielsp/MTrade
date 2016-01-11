@@ -27,6 +27,81 @@
  */
 
 package us.textrade.models;
+import java.util.Date;
 
 public class Trade {
+    private int tradeID;
+    private int userOneID;
+    private boolean userOneApproved;
+    private int userTwoID;
+    private boolean userTwoApproved;
+    private String bookOne;
+    private String bookTwo;
+    private String status;
+    private Date dateCreated;
+
+    public Trade(int tradeID, int userOneID, boolean userOneApproved,
+                 int userTwoID, boolean userTwoApproved, String bookOne,
+                 String bookTwo, String status, Date dateCreated) {
+        this.tradeID = tradeID;
+        this.userOneID = userOneID;
+        this.userOneApproved = userOneApproved;
+        this.userTwoID = userTwoID;
+        this.userTwoApproved = userTwoApproved;
+        this.bookOne = bookOne;
+        this.bookTwo = bookTwo;
+        this.status = status;
+        this.dateCreated = dateCreated;
+    }
+
+    public int getTradeID() {
+        return tradeID;
+    }
+
+    public int getUserOneID() {
+        return this.userOneID;
+    }
+
+    public boolean isUserOneApproved() {
+        return userOneApproved;
+    }
+
+    public int getUserTwoID() {
+        return this.userTwoID;
+    }
+
+    public boolean isUserTwoApproved() {
+        return userTwoApproved;
+    }
+
+    public String getBookOne() {
+        return bookOne;
+    }
+
+    public String getBookTwo() {
+        return bookTwo;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    @Override
+    public String toString() {
+        return "Trade{" +
+                "tradeID=" + tradeID +
+                ", userOneID=" + userOneID +
+                ", userOneApproved=" + userOneApproved +
+                ", userTwoID=" + userTwoID +
+                ", userTwoApproved=" + userTwoApproved +
+                ", bookOne='" + bookOne + '\'' +
+                ", bookTwo='" + bookTwo + '\'' +
+                ", status='" + status + '\'' +
+                ", dateCreated=" + dateCreated +
+                '}';
+    }
 }
