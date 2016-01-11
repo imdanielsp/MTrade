@@ -1,8 +1,12 @@
+package us.textrade.models;
+
+import java.sql.Date;
+
 /**
  * Created by dsantos on 1/10/16 for Textrade.
  * The MIT License (MIT)
  * Copyright (c) 2016 Daniel Santos
-
+ * <p>
  * Permission is hereby granted, free of charge, to any
  * person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the
@@ -11,59 +15,46 @@
  * sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so,
  * subject to the following conditions:
-
+ * <p>
  * The above copyright notice and this permission notice shall
  * be included in all copies or substantial portions of the
  * Software.
- *
+ * <p>
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
  * KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
  * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
+ * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS
  * OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
  * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+public class Book {
+    private String title;
+    private String isbn;
+    private String username;
+    private Date datePosted;
 
-package us.textrade.models;
-
-import java.util.ArrayDeque;
-import java.util.Queue;
-
-/**
- *  This class is a queue for the trade that match.
- *  NotificationSender will read the trade in this
- *  queue to send notification to users.
- * */
-public class MatchesQueue {
-    private Queue<Trade> tradesInQueue;
-
-    public MatchesQueue() {
-        this.tradesInQueue = new ArrayDeque<Trade>();
+    public Book(String title, String isbn, String username, Date datePosted) {
+        this.title = title;
+        this.isbn = isbn;
+        this.username = username;
+        this.datePosted = datePosted;
     }
 
-    public Queue<Trade> getTradesInQueue() {
-        return tradesInQueue;
+    public String getTitle() {
+        return title;
     }
 
-    public void addTradeToQueue(Trade trade){
-        this.getTradesInQueue().add(trade);
+    public String getIsbn() {
+        return isbn;
     }
 
-    public Trade getNextTrade(){
-        return this.getTradesInQueue().poll();
+    public String getUsername() {
+        return username;
     }
 
-    public Trade seeNextTrade(){
-        return this.getTradesInQueue().peek();
-    }
-
-    public int queueSize(){
-        return this.getTradesInQueue().size();
-    }
-
-    public boolean isEmpty(){
-        return this.getTradesInQueue().isEmpty();
+    public Date getDatePosted() {
+        return datePosted;
     }
 }
