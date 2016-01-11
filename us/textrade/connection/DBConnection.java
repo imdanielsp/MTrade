@@ -30,6 +30,7 @@ package us.textrade.connection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 
 public class DBConnection {
@@ -47,6 +48,7 @@ public class DBConnection {
             return null;
         }
     }
+
     public static void closeConnection(Connection con) {
         try {
             con.close();
@@ -55,4 +57,5 @@ public class DBConnection {
             sqle.printStackTrace();
         }
     }
+
 }

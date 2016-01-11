@@ -47,8 +47,10 @@ public class MatchesQueue {
         return tradesInQueue;
     }
 
-    public void addTradeToQueue(Trade trade){
-        this.getTradesInQueue().add(trade);
+    public boolean addTradeToQueue(Trade trade) {
+        if(this.tradesInQueue.contains(trade))
+            return this.getTradesInQueue().add(trade);
+        return false;
     }
 
     public Trade getNextTrade(){
@@ -65,5 +67,12 @@ public class MatchesQueue {
 
     public boolean isEmpty(){
         return this.getTradesInQueue().isEmpty();
+    }
+
+    @Override
+    public String toString() {
+        return "MatchesQueue{" +
+                "tradesInQueue=" + tradesInQueue +
+                '}';
     }
 }

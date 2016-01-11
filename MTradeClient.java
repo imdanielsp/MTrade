@@ -26,28 +26,20 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import us.textrade.connection.*;
+import us.textrade.BookController;
+import us.textrade.BookTradeController;
+import us.textrade.connection.DBConnection;
+import us.textrade.models.BookTrade;
 
 import java.sql.*;
+import java.util.List;
+import java.util.ArrayList;
 
 public class MTradeClient {
     public static void main(String[] args) {
-        ResultSet rs;
-        try {
-            Connection con = DBConnection.makeConnection();
-            Statement sta  = con.createStatement();
-            rs = sta.executeQuery("SELECT * FROM trade");
-
-            while (rs.next()){
-                System.out.println(rs.getString("book_one"));
-            }
-
-            DBConnection.closeConnection(con);
-
-        }catch (SQLException sqle){
-            System.out.println("Something when wrong connection to Textrade.");
-            sqle.printStackTrace();
+        List<BookTrade> list = new ArrayList<>(BookTradeController.loadBookTrade());
+        for(BookTrade b : list){
+            System.out.println(b);
         }
-
     }
 }

@@ -1,7 +1,3 @@
-package us.textrade.models;
-
-import java.sql.Date;
-
 /**
  * Created by dsantos on 1/10/16 for Textrade.
  * The MIT License (MIT)
@@ -29,10 +25,16 @@ import java.sql.Date;
  * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-public class Book {
+
+package us.textrade.models;
+
+import java.sql.Date;
+
+public class Book implements Comparable{
     private String title;
     private String isbn;
     private String username;
+    private String status;
     private Date datePosted;
 
     public Book(String title, String isbn, String username, Date datePosted) {
@@ -56,5 +58,27 @@ public class Book {
 
     public Date getDatePosted() {
         return datePosted;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "title='" + title + '\'' +
+                ", isbn='" + isbn + '\'' +
+                ", username='" + username + '\'' +
+                ", datePosted=" + datePosted +
+                '}';
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Book obj = (Book) o;
+        if(obj.getUsername().equals(((Book) o).getUsername()) && obj.getIsbn().equals(((Book) o).getIsbn()))
+            return 1;
+        return 0;
     }
 }

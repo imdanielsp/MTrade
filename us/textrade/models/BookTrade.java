@@ -27,53 +27,22 @@
  */
 
 package us.textrade.models;
-import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 
 public class BookTrade {
-    private int tradeID;
-    private int userOneID;
-    private boolean userOneApproved;
-    private int userTwoID;
-    private boolean userTwoApproved;
+    private String userName;
     private List<Book> wantBooks;
     private List<Book> haveBooks;
-    private String status;
-    private Date dateCreated;
 
-    public BookTrade(int tradeID, int userOneID, boolean userOneApproved,
-                     int userTwoID, boolean userTwoApproved, ArrayList<Book> wantBooks,
-                     ArrayList<Book> haveBooks, String status, Date dateCreated) {
-        this.tradeID = tradeID;
-        this.userOneID = userOneID;
-        this.userOneApproved = userOneApproved;
-        this.userTwoID = userTwoID;
-        this.userTwoApproved = userTwoApproved;
+    public BookTrade(String userName, List<Book> wantBooks,
+                     List<Book> haveBooks) {
+        this.userName = userName;
         this.wantBooks = wantBooks;
         this.haveBooks = haveBooks;
-        this.status = status;
-        this.dateCreated = dateCreated;
     }
 
-    public int getTradeID() {
-        return tradeID;
-    }
-
-    public int getUserOneID() {
-        return this.userOneID;
-    }
-
-    public boolean isUserOneApproved() {
-        return userOneApproved;
-    }
-
-    public int getUserTwoID() {
-        return this.userTwoID;
-    }
-
-    public boolean isUserTwoApproved() {
-        return userTwoApproved;
+    public String getUserName() {
+        return userName;
     }
 
     public List<Book> getWantBooks() {
@@ -84,26 +53,12 @@ public class BookTrade {
         return haveBooks;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public Date getDateCreated() {
-        return dateCreated;
-    }
-
     @Override
     public String toString() {
         return "BookTrade[" +
-                "tradeID=" + tradeID +
-                ", userOneID=" + userOneID +
-                ", userOneApproved=" + userOneApproved +
-                ", userTwoID=" + userTwoID +
-                ", userTwoApproved=" + userTwoApproved +
+                "userName='" + userName + '\'' +
                 ", wantBooks='" + wantBooks + '\'' +
                 ", haveBooks='" + haveBooks + '\'' +
-                ", status='" + status + '\'' +
-                ", dateCreated=" + dateCreated +
                 ']';
     }
 }
