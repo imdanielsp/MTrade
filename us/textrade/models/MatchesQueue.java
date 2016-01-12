@@ -48,13 +48,14 @@ public class MatchesQueue {
     }
 
     public boolean addTradeToQueue(Trade trade) {
-        if(this.tradesInQueue.contains(trade))
+        if(trade != null)
             return this.getTradesInQueue().add(trade);
         return false;
     }
 
-    public Trade getNextTrade(){
-        return this.getTradesInQueue().poll();
+    public Trade deleteHead(){
+        return !this.tradesInQueue.isEmpty() ?
+                this.tradesInQueue.remove() : null;
     }
 
     public Trade seeNextTrade(){

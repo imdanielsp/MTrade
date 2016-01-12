@@ -55,31 +55,56 @@ public class MatchEngine {
         this.listBookTrade = BookTradeController.loadBookTrade();
     }
 
-    private static List<Trade> findMatchByTitle(){
+    private static Trade findMatchByTitle(){
         return findMatch(
                 "SELECT want.id AS WANT_ID, want.user_id AS WANT_BY, want.name AS WANT_TITLE,\n" +
                 "  want.isbn AS WANT_ISBN, want.date_posted AS DATE_POSTED,\n" +
                 "  have.id AS HAVE_ID, have.user_id AS HAVE_BY, have.name AS HAVE_TITLE,\n" +
                 "  have.isbn AS HAVE_ISBN, have.date_posted AS DATE_POSTED\n" +
                 "  FROM booktradewant AS want\n" +
-                "  JOIN booktradehave AS have ON want.name = have.name;"
+                "  JOIN booktradehave AS have ON want.name = have.name\n" +
+                "  ORDER BY want.date_posted;"
         );
     }
 
-    private static List<Trade> findMatchByISBN(){
+    private static Trade findMatchByISBN(){
         return findMatch(
                 "SELECT want.id AS WANT_ID, want.user_id AS WANT_BY, want.name AS WANT_TITLE,\n" +
                 "  want.isbn AS WANT_ISBN, want.date_posted AS DATE_POSTED,\n" +
                 "  have.id AS HAVE_ID, have.user_id AS HAVE_BY, have.name AS HAVE_TITLE,\n" +
                 "  have.isbn AS HAVE_ISBN, have.date_posted AS DATE_POSTED\n" +
                 "  FROM booktradewant AS want\n" +
-                "  JOIN booktradehave AS have ON want.isbn = have.isbn;"
+                "  JOIN booktradehave AS have ON want.isbn = have.isbn\n" +
+                "  ORDER BY want.date_posted;"
         );
     }
 
-    private static List<Trade> findMatch(String query){
+    private static void deleteFromDatabase(String id, String tableName)
+            throws SQLException{
+        Connection conn = DBConnection.makeConnection();
 
-        List<Trade> listOfTrades = new ArrayList<>();
+        Statement statement = conn.createStatement();
+
+        statement.executeUpdate(
+            String.format(
+                "DELETE FROM %s WHERE id = '%s'",
+                    tableName, id
+            )
+        );
+
+        DBConnection.closeConnection(conn);
+    }
+
+    private static void dropWantBook(String bookID) throws SQLException {
+        deleteFromDatabase(bookID, "booktradewant");
+    }
+
+    private static void dropHaveBook(String bookID) throws SQLException {
+        deleteFromDatabase(bookID, "booktradehave");
+    }
+
+    private static Trade findMatch(String query){
+
         List<Map<String, String>> listOfPossibleTrade = new ArrayList<>();
         Connection conn = DBConnection.makeConnection();
 
@@ -99,9 +124,15 @@ public class MatchEngine {
                 newMap.put("HAVE_ISBN", set.getString("HAVE_ISBN"));
                 listOfPossibleTrade.add(newMap);
             }
+
+            statement.close();
+            set.close();
+
         }catch (SQLException sqle){
             sqle.printStackTrace();
         }
+
+        DBConnection.closeConnection(conn);
 
         for(int i = 0; i < listOfPossibleTrade.size(); i++){
             Map<String, String> currentMap = listOfPossibleTrade.get(i);
@@ -109,50 +140,59 @@ public class MatchEngine {
                 try {
                     Map<String, String> nextMap = listOfPossibleTrade.get(j);
                     if(currentMap.get("WANT_BY").equals(nextMap.get("HAVE_BY"))){
-                        listOfTrades.add(
-                            new Trade(
-                                currentMap.get("WANT_BY"),
-                                currentMap.get("WANT_ISBN"),
-                                false,
-                                currentMap.get("HAVE_BY"),
-                                nextMap.get("HAVE_ISBN"),
-                                false,
-                                "processing",
-                                new Date(new java.util.Date().getTime())
-                            )
+
+                        dropHaveBook(currentMap.get("HAVE_ID"));
+                        dropHaveBook(nextMap.get("HAVE_ID"));
+                        dropWantBook(currentMap.get("WANT_ID"));
+                        dropWantBook(nextMap.get("WANT_ID"));
+
+                        return new Trade(
+                            currentMap.get("WANT_BY"),
+                            currentMap.get("WANT_ISBN"),
+                            false,
+                            currentMap.get("HAVE_BY"),
+                            nextMap.get("HAVE_ISBN"),
+                            false,
+                            "processing",
+                            new Date(new java.util.Date().getTime())
                         );
-                        listOfPossibleTrade.remove(j);
-                        listOfPossibleTrade.remove(i);
-                        i = 0;
-                        break;
                     }
                 }catch (IndexOutOfBoundsException iob){
                     break;
+                }catch (SQLException sqle) {
+                    sqle.printStackTrace();
                 }
             }
-            i--;
         }
-        DBConnection.closeConnection(conn);
 
-        return listOfTrades;
+        DBConnection.closeConnection(conn);
+        return null;
     }
 
     public static void run(){
         MatchesQueue queue = new MatchesQueue();
-        List<Trade> listOfTrade;
+        Trade newTrade;
+        QueueHandler qHandler = new QueueHandler(queue);
 
         while (true){
-            listOfTrade = findMatchByTitle();
+            System.out.println("Finding matches....");
 
-            for(Trade trade : listOfTrade){
-                if(queue.addTradeToQueue(trade));
-                    System.out.println("New Trade added");
-            }
+            newTrade = findMatchByISBN();
 
-            try {
-                Thread.sleep(10000);
-            }catch (InterruptedException ie){
-                ie.printStackTrace();
+            if(queue.addTradeToQueue(newTrade));
+                System.out.println(newTrade);
+
+            if(newTrade == null) {
+
+                System.out.println("Trade(s) found: " + queue.queueSize());
+
+                qHandler.activateHandler();
+
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException ie) {
+                    ie.printStackTrace();
+                }
             }
         }
     }

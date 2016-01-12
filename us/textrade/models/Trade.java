@@ -27,7 +27,7 @@
  */
 
 package us.textrade.models;
-import java.util.Date;
+import java.sql.Date;
 import java.util.UUID;
 
 public class Trade implements Comparable<Trade> {
@@ -58,7 +58,7 @@ public class Trade implements Comparable<Trade> {
     public String getInternalID() {
         return internalID;
     }
-    public String getUserOneID() {
+    public String getUserOne() {
         return userOne;
     }
 
