@@ -26,20 +26,10 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import us.textrade.BookController;
-import us.textrade.BookTradeController;
-import us.textrade.connection.DBConnection;
-import us.textrade.models.BookTrade;
-
-import java.sql.*;
-import java.util.List;
-import java.util.ArrayList;
+import us.textrade.MatchEngine;
 
 public class MTradeClient {
     public static void main(String[] args) {
-        List<BookTrade> list = new ArrayList<>(BookTradeController.loadBookTrade());
-        for(BookTrade b : list){
-            System.out.println(b);
-        }
+        MatchEngine.run();
     }
 }

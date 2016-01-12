@@ -33,9 +33,11 @@ import java.util.UUID;
 public class Trade implements Comparable<Trade> {
     private String internalID;
     private String userOne;
+    private String userOneEmail;
     private String bookOne;
     private boolean userOneApproved;
     private String userTwo;
+    private String userTwoEmail;
     private String bookTwo;
     private boolean userTwoApproved;
     private String status;
@@ -92,17 +94,14 @@ public class Trade implements Comparable<Trade> {
 
     @Override
     public String toString() {
-        return "Trade{" +
-                "internalID=" + internalID +
-                ", userOneID=" + userOne +
-                ", userOneApproved=" + userOneApproved +
-                ", userTwo=" + userTwo +
-                ", userTwoApproved=" + userTwoApproved +
-                ", bookOne=" + bookOne +
-                ", bookTwo=" + bookTwo +
-                ", status='" + status + '\'' +
-                ", dateCreated=" + dateCreated +
-                '}';
+        return String.format(
+                "%n     +++ Trade +++%n" +
+                "BY %s    &    %s%n" +
+                "THIS: %s%n" +
+                "FOR: %s%n%n",
+                this.getUserOne(), this.getUserTwo(),
+                this.getBookOne(), this.getBookTwo()
+        );
     }
 
     @Override

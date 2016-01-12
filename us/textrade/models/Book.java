@@ -42,6 +42,7 @@ public class Book implements Comparable{
         this.isbn = isbn;
         this.username = username;
         this.datePosted = datePosted;
+        this.status = "available";
     }
 
     public String getTitle() {

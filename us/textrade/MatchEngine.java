@@ -27,10 +27,7 @@
  */
 package us.textrade;
 
-import us.textrade.BookTradeController;
 import us.textrade.connection.DBConnection;
-import us.textrade.models.Book;
-import us.textrade.models.BookTrade;
 import us.textrade.models.MatchesQueue;
 import us.textrade.models.Trade;
 
@@ -47,13 +44,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class MatchEngine {
-    private final MatchesQueue queue;
-    private List<BookTrade> listBookTrade;
 
-    public MatchEngine(){
-        this.queue = new MatchesQueue();
-        this.listBookTrade = BookTradeController.loadBookTrade();
-    }
+    private static final MatchesQueue queue = new MatchesQueue();
 
     private static Trade findMatchByTitle(){
         return findMatch(
@@ -170,21 +162,23 @@ public class MatchEngine {
     }
 
     public static void run(){
-        MatchesQueue queue = new MatchesQueue();
         Trade newTrade;
         QueueHandler qHandler = new QueueHandler(queue);
 
         while (true){
-            System.out.println("Finding matches....");
+            System.out.println("Looking for matches....");
 
             newTrade = findMatchByISBN();
 
-            if(queue.addTradeToQueue(newTrade));
+            if(queue.addTradeToQueue(newTrade)) {
+                System.out.println("Match found!");
                 System.out.println(newTrade);
+            }
 
             if(newTrade == null) {
 
-                System.out.println("Trade(s) found: " + queue.queueSize());
+                System.out.printf("Trade(s) found: %s%n%n",
+                        queue.queueSize());
 
                 qHandler.activateHandler();
 
