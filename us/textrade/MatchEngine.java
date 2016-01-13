@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.io.File;
 
 public class MatchEngine {
 
@@ -165,6 +166,13 @@ public class MatchEngine {
         Trade newTrade;
         QueueHandler qHandler = new QueueHandler(queue);
 
+        // Check if email config exits
+        File config = new File("/usr/local/mtrade/emails/config.xml");
+        if(!config.exists() || config.isDirectory()) {
+            System.out.println("Email configuration cannot be open or doesn't exists");
+            System.exit(0);
+        }
+
         while (true){
             System.out.println("Looking for matches....");
 
@@ -189,10 +197,6 @@ public class MatchEngine {
                 }
             }
         }
-    }
-
-    public static void main(String[] args){
-        MatchEngine.run();
     }
 
 }

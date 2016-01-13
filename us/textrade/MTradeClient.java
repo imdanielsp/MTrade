@@ -1,4 +1,4 @@
-/**
+package us.textrade; /**
  * Created by dsantos on 1/10/16 for Textrade.
  * The MIT License (MIT)
  * Copyright (c) 2016 Daniel Santos
@@ -26,7 +26,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import us.textrade.MatchEngine;
 
 public class MTradeClient {
     public static void main(String[] args) {

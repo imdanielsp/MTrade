@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<email-settings>
+
+    <host>smtp.gmail.com</host>
+
+    <port>587</port>
+
+    <sender>dsantosp12@gmail.com</sender>
+
+    <sender-mask>Textrade</sender-mask>
+
+    <password>Kila@topla$1432ggg</password>
+
+</email-settings>

@@ -27,6 +27,9 @@
  */
 package us.textrade;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 import us.textrade.connection.DBConnection;
 import us.textrade.models.MatchesQueue;
 import us.textrade.models.Trade;
@@ -41,6 +44,10 @@ import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 
 public class QueueHandler {
 
@@ -106,12 +113,51 @@ public class QueueHandler {
         );
 
         sendEmail(users);
-        System.out.printf("Sent message successfully....%n%n");
+        System.out.printf("Notification sent successfully....%n%n");
+    }
+
+    private Map<String, String> getEmailConfig(){
+
+        Map<String, String> emailConfig = new HashMap<>();
+        String xmlPath = "/usr/local/mtrade/emails/config.xml";
+
+        Document dom;
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+        try{
+            DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
+            dom = documentBuilder.parse(xmlPath);
+
+            emailConfig.put("host",
+                    dom.getElementsByTagName("host").item(0).getTextContent()
+            );
+
+            emailConfig.put("port",
+                    dom.getElementsByTagName("port").item(0).getTextContent()
+            );
+
+            emailConfig.put("sender",
+                    dom.getElementsByTagName("sender").item(0).getTextContent()
+            );
+
+            emailConfig.put("sender-mask",
+                    dom.getElementsByTagName("sender-mask").item(0).getTextContent())
+            ;
+
+            emailConfig.put("password",
+                    dom.getElementsByTagName("password").item(0).getTextContent()
+            );
+
+            return emailConfig;
+
+        } catch (ParserConfigurationException | SAXException | IOException e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private String getHTML(){
-        String htmlTemplate = "/Users/dsantos/Web Projects/Textrade/" +
-                "MTrade/src/us/textrade/emails/found_match_template.html";
+        String htmlTemplate = "/usr/local/mtrade/emails/found_match_template.html";
 
         try {
             InputStream ips = new FileInputStream(htmlTemplate);
@@ -127,7 +173,11 @@ public class QueueHandler {
             return html;
         } catch (FileNotFoundException fnf){
             fnf.printStackTrace();
-            return null;
+            return  "<h2>Hey %s we found a match for you!</h2>" +
+                    "<a href=\"http://www.textrade.us/dashboard/trade-requests/\">" +
+                        "<p>Click here to approve this trade</p>" +
+                    "</a><p>This is the default html, no html file found.</p>";
+
         } catch (IOException ioe){
             ioe.printStackTrace();
         }
@@ -137,16 +187,22 @@ public class QueueHandler {
 
     private void sendEmail(List<Map<String, String>> users){
 
-        // TODO: Change to textrade email system
-        String senderEmail = "dsantosp12@gmail.com";
-        String senderPassword = "Kila@topla$1432ggg";
+        Map<String, String> emailConfig = getEmailConfig();
+
+        String senderWithMask = String.format(
+            "%s <%s>", emailConfig.get("sender-mask"),
+                emailConfig.get("sender")
+        );
+        String senderEmail = emailConfig.get("sender");
+        String senderPassword = emailConfig.get("password");
+
         Properties props = new Properties();
         String htmlTemplate = getHTML();
 
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.host", emailConfig.get("host"));
+        props.put("mail.smtp.port", emailConfig.get("port"));
 
         Session session = Session.getInstance(props,
             new javax.mail.Authenticator() {
@@ -155,27 +211,23 @@ public class QueueHandler {
                 }
             }
         );
+
         for(Map<String, String> user : users){
             try {
-                // Create a default MimeMessage object.
+
                 Message message = new MimeMessage(session);
 
-                // Set From: header field of the header.
-                message.setFrom(new InternetAddress(senderEmail));
+                message.setFrom(new InternetAddress(senderWithMask));
 
-                // Set To: header field of the header.
                 message.setRecipients(Message.RecipientType.TO,
                         InternetAddress.parse(user.get("email")));
 
-                // Set Subject: header field
-                message.setSubject("Testing Subject");
+                message.setSubject("We found a match!");
 
-                // Send the actual HTML message, as big as you like
                 message.setContent(
                         String.format(htmlTemplate, user.get("name")),
                         "text/html");
 
-                // Send message
                 Transport.send(message);
 
             } catch (MessagingException e) {
