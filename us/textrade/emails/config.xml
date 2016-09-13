@@ -2,14 +2,14 @@
 
 <email-settings>
 
-    <host>smtp.gmail.com</host>
+    <host>{host}</host>
 
-    <port>587</port>
+    <port>{port}</port>
 
-    <sender>dsantosp12@gmail.com</sender>
+    <sender>{email}</sender>
 
     <sender-mask>Textrade</sender-mask>
 
-    <password>Kila@topla$1432ggg</password>
+    <password>{password}</password>
 
 </email-settings>
